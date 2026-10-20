@@ -1,0 +1,141 @@
+/* =========================================================
+   BP2TL Jakarta — fx.css
+   Gaya tambahan untuk Admin & Super Admin (dipasangkan dengan fx.js).
+   Dimuat SETELAH style.css agar bisa menimpa aturan yang sama.
+   ========================================================= */
+
+/* ---------------- Layar login: laut malam ---------------- */
+.admin-login{position:relative; overflow:hidden; background:#04182A;}
+.fx-scene{position:absolute; inset:0; z-index:0; pointer-events:none;}
+.fx-scene svg{display:block; width:100%; height:100%;}
+/* ---------------- Layar login: foto bergantian ---------------- */
+.fx-photos{position:absolute; inset:0; z-index:0; pointer-events:none; background:#04182A;}
+.fx-photo{
+  position:absolute; inset:0;
+  background-size:cover; background-position:center;
+  opacity:0; transition:opacity 1.6s ease-in-out;
+}
+.fx-photo.is-on{opacity:1;}
+/* lapisan gelap tipis agar kartu login dan teksnya tetap terbaca di atas foto terang */
+.fx-photos::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(4,24,42,.45) 0%, rgba(4,24,42,.72) 100%);
+}
+@media (prefers-reduced-motion:reduce){ .fx-photo{transition:none;} }
+
+.admin-login-card{
+  position:relative; z-index:1;
+  background:rgba(255,255,255,.93);
+  -webkit-backdrop-filter:blur(10px) saturate(1.2); backdrop-filter:blur(10px) saturate(1.2);
+  border-top:3px solid var(--gold-500);
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+}
+
+@keyframes fxSailRight{from{transform:translateX(-340px)} to{transform:translateX(1960px)}}
+@keyframes fxSailLeft {from{transform:translateX(1960px)}  to{transform:translateX(-340px)}}
+@keyframes fxBob      {0%,100%{transform:translateY(0)} 50%{transform:translateY(-2.5px)}}
+@keyframes fxTwinkle  {0%,100%{opacity:.25} 50%{opacity:1}}
+@keyframes fxShimmer  {0%,100%{opacity:.15; transform:scaleX(.7)} 50%{opacity:.6; transform:scaleX(1)}}
+@keyframes fxBeam     {0%{transform:scaleX(.04); opacity:0} 16%{transform:scaleX(1); opacity:1} 46%{transform:scaleX(1); opacity:.9} 62%{transform:scaleX(.04); opacity:0} 100%{transform:scaleX(.04); opacity:0}}
+@keyframes fxLampPulse{0%,100%{opacity:.55} 50%{opacity:1}}
+@keyframes fxWaveShift{from{transform:translateX(0)} to{transform:translateX(-800px)}}
+@keyframes fxWaveBack {from{transform:translateX(-800px)} to{transform:translateX(0)}}
+
+.fx-ship-far {animation:fxSailRight 150s linear infinite;}
+.fx-ship-near{animation:fxSailLeft 95s linear infinite; animation-delay:-40s;}
+.fx-bob      {animation:fxBob 5s ease-in-out infinite;}
+.fx-bob-2    {animation-duration:6.5s; animation-delay:-2s;}
+.fx-star     {animation:fxTwinkle 4s ease-in-out infinite;}
+.fx-shimmer  {transform-box:fill-box; transform-origin:center; animation:fxShimmer 4.5s ease-in-out infinite;}
+.fx-beam     {transform-box:fill-box; transform-origin:0 50%; animation:fxBeam 9s ease-in-out infinite;}
+.fx-lamp     {animation:fxLampPulse 4.5s ease-in-out infinite;}
+.fx-wave-1   {animation:fxWaveShift 26s linear infinite;}
+.fx-wave-2   {animation:fxWaveBack 19s linear infinite;}
+.fx-wave-3   {animation:fxWaveShift 13s linear infinite;}
+
+/* ---------------- Banner sapaan dashboard ---------------- */
+.dash-hero{
+  position:relative; overflow:hidden; margin-bottom:22px;
+  padding:24px 26px 46px; border-radius:10px; color:#fff;
+  background:linear-gradient(120deg,#0A2A43 0%,#123A5C 58%,#1B4A70 100%);
+  box-shadow:var(--shadow-soft);
+}
+.dash-hero-date{margin:0 0 6px; font-size:12.5px; letter-spacing:.07em; text-transform:uppercase; color:#9FB4C6;}
+.dash-hero-title{margin:0 0 6px; font-family:'Poppins',sans-serif; font-size:24px; line-height:1.25; color:#fff;}
+.dash-hero-sum{margin:0; max-width:520px; font-size:14.5px; color:#D6E2EC;}
+.dash-hero-sum strong{color:var(--gold-500); font-size:1.15em;}
+.dash-hero-ship{position:absolute; right:26px; top:14px; width:150px; height:auto; pointer-events:none; animation:fxBob 6s ease-in-out infinite;}
+.dash-hero-wave{position:absolute; left:0; bottom:-1px; width:200%; height:26px; fill:var(--paper-50); pointer-events:none; animation:fxHeroWave 16s linear infinite;}
+@keyframes fxHeroWave{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+
+/* ---------------- Kartu statistik ---------------- */
+.stat-card--fx{position:relative; padding-right:64px; transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;}
+.stat-card .stat-ico{
+  position:absolute; top:14px; right:14px; width:36px; height:36px; border-radius:9px;
+  display:grid; place-items:center; background:rgba(10,42,67,.08); color:var(--navy-900);
+}
+.stat-card.tone-gold  .stat-ico{background:rgba(245,166,35,.18); color:#B26F00;}
+.stat-card.tone-green .stat-ico{background:rgba(46,139,87,.15);  color:#1F7A47;}
+.stat-card.tone-blue  .stat-ico{background:rgba(27,74,112,.14);  color:var(--navy-600);}
+.stat-card[data-filter]{cursor:pointer;}
+.stat-card[data-filter]:hover{transform:translateY(-2px); box-shadow:var(--shadow-soft);}
+.stat-card[data-filter]:focus-visible{outline:2px solid var(--gold-500); outline-offset:2px;}
+.stat-card.is-active{border-color:var(--gold-500); box-shadow:0 0 0 2px rgba(245,166,35,.35);}
+
+/* ---------------- Badge tiket menunggu & tombol bunyi ---------------- */
+.nav-badge{
+  margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:10px;
+  display:inline-grid; place-items:center;
+  background:var(--gold-500); color:var(--navy-900); font-size:12px; font-weight:700; line-height:1;
+}
+.nav-badge[hidden]{display:none;}
+
+.fx-sound{
+  display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:4px;
+  background:transparent; color:#fff; border:1px solid rgba(255,255,255,.4);
+  font:inherit; font-size:12.5px; cursor:pointer; transition:background .15s ease, border-color .15s ease;
+}
+.fx-sound:hover{background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.7);}
+.fx-sound[aria-pressed="true"]{border-color:var(--gold-500); color:var(--gold-500);}
+
+/* ---------------- Bar loading bergambar kapal ---------------- */
+.fx-shipbar{
+  position:fixed; left:0; right:0; top:0; height:3px; z-index:100;
+  background:rgba(245,166,35,.18); opacity:0; transition:opacity .2s ease; pointer-events:none;
+}
+.fx-shipbar.on{opacity:1;}
+.fx-shipbar-fill{position:absolute; top:0; bottom:0; left:0; width:28%; background:var(--gold-500); border-radius:0 3px 3px 0; animation:fxBarRun 1.7s ease-in-out infinite;}
+.fx-shipbar-ship{position:absolute; top:-10px; left:0; animation:fxShipRun 1.7s ease-in-out infinite;}
+@keyframes fxBarRun {0%{left:-28%} 100%{left:100%}}
+@keyframes fxShipRun{0%{left:-34px} 100%{left:100%}}
+
+/* ---------------- Balasan cepat (jendela jawab) ---------------- */
+.qr-box{margin:0 0 10px;}
+.qr-title{margin-bottom:6px; font-size:12.5px; font-weight:600; color:var(--slate-500);}
+.qr-chips{display:flex; flex-wrap:wrap; gap:6px;}
+.qr-chip{
+  display:inline-flex; align-items:center; padding:5px 11px; border-radius:999px;
+  border:1px solid var(--line); background:var(--white); color:var(--navy-900);
+  font:inherit; font-size:12.5px; cursor:pointer; transition:border-color .15s ease, background .15s ease;
+}
+.qr-chip:hover{border-color:var(--gold-500); background:rgba(245,166,35,.1);}
+.qr-chip button{border:none; background:none; padding:0; font:inherit; color:inherit; cursor:pointer;}
+.qr-chip .x{margin-left:7px; color:var(--slate-500); font-size:15px; line-height:1;}
+.qr-chip .x:hover{color:#B3402F;}
+.qr-save{border-style:dashed; color:var(--slate-500);}
+.qr-hint{margin-top:7px; font-size:12px; line-height:1.45; color:var(--slate-500);}
+
+/* ---------------- Layar kecil ---------------- */
+@media (max-width:640px){
+  .dash-hero{padding:20px 18px 42px;}
+  .dash-hero-title{font-size:20px;}
+  .dash-hero-ship{display:none;}
+  .fx-sound span{display:none;}
+  .stat-card--fx{padding-right:56px;}
+}
+
+/* ---------------- Hormati "kurangi gerakan" ---------------- */
+@media (prefers-reduced-motion:reduce){
+  .fx-scene *, .dash-hero-ship, .dash-hero-wave, .fx-shipbar-fill, .fx-shipbar-ship{animation:none !important;}
+  .stat-card--fx, .stat-card[data-filter]:hover{transition:none; transform:none;}
+}
