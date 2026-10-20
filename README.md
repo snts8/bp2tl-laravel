@@ -7,10 +7,10 @@ Ringkas:
 
 ```bash
 composer install
-cp .env.example .env            # lalu isi DB_* dan LEGACY_DB_DATABASE
+cp .env.example .env           
 php artisan key:generate
 php artisan migrate
 php artisan bp2tl:impor-data-lama
 php artisan serve               # http://localhost:8000
-php artisan test                # opsional: 26 tes perilaku
+php artisan test                
 ```
