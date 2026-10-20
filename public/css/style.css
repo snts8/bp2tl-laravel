@@ -882,8 +882,8 @@ table.qtable.faq-table{table-layout:fixed; min-width:0; width:100%;}
   .section-head{margin-bottom:22px;}
 
   .hero{padding:44px 0 52px; min-height:0;}
-  .hero-actions{flex-direction:column; align-items:stretch; max-width:360px; margin:0 auto;}
-  .hero-actions .btn{width:100%; white-space:normal; padding:13px 16px; font-size:14.5px;}
+  .hero-actions{flex-direction:column; align-items:center; width:100%; max-width:360px; margin:0 auto;}
+  .hero-actions .btn{width:100%; max-width:none; white-space:normal; padding:13px 16px; font-size:14.5px;}
 
   .tanya-card{padding:18px 16px 22px; border-radius:14px;}
 
