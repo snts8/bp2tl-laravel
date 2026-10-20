@@ -656,12 +656,10 @@ table.qtable{width:100%; border-collapse:collapse; min-width:720px;}
   .admin-toolbar input{flex:1 1 100%; min-width:0;}
   .admin-toolbar .filters .btn{flex:1 1 100%;} /* tombol "Muat Ulang" dkk ikut selebar layar, tidak lagi kepotong di kanan */
 
-  /* kasih hint visual kalau tabel bisa digeser ke samping */
-  .table-wrap{position:relative;}
-  .table-wrap::after{
-    content:""; position:absolute; top:0; right:0; bottom:0; width:22px; pointer-events:none;
-    background:linear-gradient(90deg, rgba(247,245,240,0), rgba(247,245,240,.95));
-  }
+  /* Tabel bisa digeser ke samping. Hint gradasi (::after) DIHAPUS karena ia ikut ter-scroll
+     bersama isi tabel dan meninggalkan garis samar di tengah tabel. Kolom yang terpotong
+     di tepi kanan sudah cukup menjadi petunjuk geser. */
+  .table-wrap{-webkit-overflow-scrolling:touch; overscroll-behavior-x:contain;}
 
   .modal{padding:20px 18px 18px;}
   .modal-actions{flex-wrap:wrap;}
