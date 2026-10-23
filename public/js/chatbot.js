@@ -106,10 +106,136 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollToBottom();
     return el;
   }
+  /* ---------------------------------------------------------------
+     formatBotText — mengubah teks panjang menjadi HTML rapi.
+     Mendukung pola data nyata dari DB:
+       • Baris diawali "- " / "• " / "· " / "* "  → <ul><li>
+       • Baris diawali "N. "                        → <ol><li>
+       • "Label:" sendirian di baris (Visi:, Misi:) → <h4> label
+       • "**teks**" / "# teks"                     → heading / bold
+       • **kata** di dalam kalimat                 → <strong>
+       • "Nama : Nilai" (key-value)                → baris definisi
+       • Baris kosong antar blok                   → pemisah paragraf
+       • Teks panjang otomatis dibagi per kalimat  → <p> yang nyaman dibaca
+     --------------------------------------------------------------- */
+  function formatBotText(raw){
+    if(!raw || !raw.trim()) return '';
+
+    // Escape HTML — harus dilakukan pertama sebelum apapun
+    function esc(s){
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Inline: **bold**, `code`
+    function inline(s){
+      return s
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/`(.+?)`/g, '<code>$1</code>');
+    }
+
+    // Normalisasi bullet karakter "·" (middle dot U+00B7) → "-"
+    // dan " - " di awal baris dengan spasi aneh
+    const normalized = raw
+      .replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+      .replace(/^[ \t]*·[ \t]*/gm, '- ')          // · → bullet biasa
+      .replace(/^[ \t]*•[ \t]*/gm, '- ')           // • → bullet biasa
+      .replace(/^[ \t]*–[ \t]*/gm, '- ')           // – (em-dash) → bullet
+      .replace(/^[ \t]*\*[ \t]+/gm, '- ')          // * item → bullet
+      .replace(/\n{3,}/g, '\n\n');                  // max 2 baris kosong berurutan
+
+    const lines = normalized.split('\n');
+    const html  = [];
+    let inUl = false, inOl = false, inP = false;
+
+    function closeUl(){ if(inUl){ html.push('</ul>'); inUl = false; } }
+    function closeOl(){ if(inOl){ html.push('</ol>'); inOl = false; } }
+    function closeP() { if(inP) { html.push('</p>'); inP = false; } }
+    function closeLists(){ closeUl(); closeOl(); }
+    function closeAll() { closeP(); closeLists(); }
+
+    lines.forEach(function(raw){
+      const line = raw.trimEnd();
+      const trimmed = line.trim();
+
+      // ── Baris kosong ────────────────────────────────────────────
+      if(trimmed === ''){ closeAll(); return; }
+
+      // ── Markdown heading: # Judul ───────────────────────────────
+      const hMatch = trimmed.match(/^(#{1,3})\s+(.+)/);
+      if(hMatch){
+        closeAll();
+        const lvl = Math.min(hMatch[1].length + 2, 5);
+        html.push('<h' + lvl + ' class="cb-h">' + inline(esc(hMatch[2])) + '</h' + lvl + '>');
+        return;
+      }
+
+      // ── Label tunggal di akhir baris dengan titik dua ───────────
+      // Contoh: "Visi:", "Misi:", "Pejabat:", "Fungsi:"
+      // Syarat: TIDAK ada teks tambahan setelah titik dua (atau hanya spasi)
+      const labelMatch = trimmed.match(/^([A-Za-zÀ-öø-ÿ\s]{2,40}):$/);
+      if(labelMatch){
+        closeAll();
+        html.push('<p class="cb-label">' + esc(labelMatch[1].trim()) + '</p>');
+        return;
+      }
+
+      // ── Bold penuh satu baris: **Teks** ─────────────────────────
+      const boldFull = trimmed.match(/^\*\*(.+)\*\*$/);
+      if(boldFull){
+        closeAll();
+        html.push('<p class="cb-label">' + esc(boldFull[1]) + '</p>');
+        return;
+      }
+
+      // ── Ordered list: "1. ", "2. " ──────────────────────────────
+      const olMatch = trimmed.match(/^(\d+)\.\s+(.+)/);
+      if(olMatch){
+        closeP(); closeUl();
+        if(!inOl){ html.push('<ol class="cb-list">'); inOl = true; }
+        html.push('<li>' + inline(esc(olMatch[2])) + '</li>');
+        return;
+      }
+
+      // ── Bullet list: "- teks" ────────────────────────────────────
+      const ulMatch = trimmed.match(/^-\s+(.+)/);
+      if(ulMatch){
+        closeP(); closeOl();
+        if(!inUl){ html.push('<ul class="cb-list">'); inUl = true; }
+        html.push('<li>' + inline(esc(ulMatch[1])) + '</li>');
+        return;
+      }
+
+      // ── Key : Value — "Nama Jabatan : Nilai" ────────────────────
+      // Hanya di luar list, dan hanya bila bagian kiri <= 50 karakter
+      const kvMatch = trimmed.match(/^([^:]{2,50})\s*:\s+(.+)/);
+      if(kvMatch && !inUl && !inOl){
+        closeAll();
+        html.push(
+          '<p class="cb-kv"><span class="cb-kv-k">' + esc(kvMatch[1].trim()) + ':</span> ' +
+          inline(esc(kvMatch[2].trim())) + '</p>'
+        );
+        return;
+      }
+
+      // ── Teks biasa → paragraf ───────────────────────────────────
+      closeLists();
+      if(!inP){ html.push('<p>'); inP = true; }
+      else { html.push(' '); }                    // sambung dalam <p> yang sama
+      html.push(inline(esc(trimmed)));
+    });
+
+    closeAll();
+    return html.join('');
+  }
+
   function addBotBubble(text){
     const el = document.createElement('div');
     el.className = 'chat-bubble bot';
-    el.textContent = text;
+    el.innerHTML = formatBotText(text);
     messages.appendChild(el);
     scrollToBottom();
     return el;

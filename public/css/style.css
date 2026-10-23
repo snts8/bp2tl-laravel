@@ -594,7 +594,38 @@ table.qtable{width:100%; border-collapse:collapse; min-width:720px;}
   flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px;
   background:var(--paper-50);
 }
-.chat-bubble{max-width:85%; padding:10px 13px; border-radius:10px; font-size:14px; line-height:1.5; white-space:pre-wrap; overflow-wrap:anywhere;}
+.chat-bubble{max-width:85%; padding:10px 13px; border-radius:10px; font-size:14px; line-height:1.5; overflow-wrap:anywhere;}
+
+/* Chatbot bot bubble — rich text formatting */
+.chat-bubble.bot{ white-space:normal; }
+.chat-bubble.bot p{ margin:0 0 6px; line-height:1.6; }
+.chat-bubble.bot p:last-child{ margin-bottom:0; }
+.chat-bubble.bot p.cb-label{
+  font-weight:700; margin:10px 0 3px; color:var(--heading-900);
+  font-size:12px; letter-spacing:.05em; text-transform:uppercase;
+  border-bottom:1px solid var(--line); padding-bottom:3px;
+}
+.chat-bubble.bot p.cb-label:first-child{ margin-top:0; }
+.chat-bubble.bot p.cb-kv{ margin:2px 0; font-size:13.5px; line-height:1.5; }
+.chat-bubble.bot .cb-kv-k{
+  font-weight:600; color:var(--slate-500); font-size:12px;
+  text-transform:uppercase; letter-spacing:.03em; margin-right:2px;
+}
+.chat-bubble.bot h3.cb-h,.chat-bubble.bot h4.cb-h,.chat-bubble.bot h5.cb-h{
+  font-family:'Poppins',sans-serif; font-size:13.5px; font-weight:700;
+  margin:10px 0 4px; color:var(--heading-900); line-height:1.3;
+}
+.chat-bubble.bot h3.cb-h:first-child,.chat-bubble.bot h4.cb-h:first-child,.chat-bubble.bot h5.cb-h:first-child{ margin-top:0; }
+.chat-bubble.bot ul.cb-list,.chat-bubble.bot ol.cb-list{
+  margin:4px 0 8px 0; padding-left:18px; display:flex; flex-direction:column; gap:4px;
+}
+.chat-bubble.bot ul.cb-list{ list-style:disc; }
+.chat-bubble.bot ol.cb-list{ list-style:decimal; }
+.chat-bubble.bot li{ line-height:1.5; font-size:13.5px; }
+.chat-bubble.bot strong{ font-weight:700; color:var(--heading-900); }
+.chat-bubble.bot code{ background:var(--paper-50); border:1px solid var(--line); border-radius:3px; padding:1px 4px; font-size:12.5px; font-family:monospace; }
+/* User bubble tetap plain text */
+.chat-bubble.user{ white-space:pre-wrap; }
 .chat-bubble.bot{background:var(--surface); border:1px solid var(--line); align-self:flex-start; border-bottom-left-radius:2px;}
 .chat-bubble.user{background:var(--navy-900); color:var(--white); align-self:flex-end; border-bottom-right-radius:2px;}
 .chat-bubble .src{display:block; margin-top:6px; font-size:11.5px; color:var(--slate-500);}
