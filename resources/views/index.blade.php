@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>BP2TL Jakarta Layanan Terpadu</title>
+<title>...</title>
+@include('partials.favicon')
 <meta name="description" content="Layanan terpadu BP2TL Jakarta untuk mengajukan dan melacak pertanyaan seputar transportasi laut, perizinan kapal, dan pelabuhan.">
 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 <script>
