@@ -21,6 +21,7 @@
       buffer = (buffer + e.key.toLowerCase()).slice(-TARGET.length);
       if(buffer === TARGET){
         buffer = '';
+        window.bp2tlAllowLeave = true; // pindah halaman disengaja, jangan tampilkan konfirmasi
         window.location.href = (window.BP2TL_URLS && window.BP2TL_URLS.admin) || '/admin';
       }
     }else if(e.key !== 'Shift'){
