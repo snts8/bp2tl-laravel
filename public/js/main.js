@@ -320,26 +320,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ---------- PERBAIKAN: tombol "Salin kode" ----------
+     navigator.clipboard HANYA ada di HTTPS atau localhost. Di http://IP-lokal (mis. 10.1.1.183:8000)
+     nilainya undefined, sehingga dipakai cara cadangan execCommand. */
+  function fallbackCopy(text){
+    const prev = document.activeElement;
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.left = '-9999px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, text.length);          // iOS
+    let ok = false;
+    try{ ok = document.execCommand('copy'); }catch(e){ ok = false; }
+    document.body.removeChild(ta);
+    if(prev && prev.focus) prev.focus();
+    return ok;
+  }
+
   function copyCode(code, btn){
-    navigator.clipboard.writeText(code).then(() => {
-      showToastLike(btn, 'Tersalin!');
-    }).catch(() => {
-      const ta = document.createElement('textarea');
-      ta.value = code;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      showToastLike(btn, 'Tersalin!');
-    });
+    const done = (ok) => {
+      if(ok){ showToastLike(btn, 'Tersalin!'); return; }
+      showToastLike(btn, 'Salin manual');
+      window.prompt('Salin kode ini dengan Ctrl+C, lalu tutup:', code);   // cadangan terakhir
+    };
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(code).then(() => done(true)).catch(() => done(fallbackCopy(code)));
+    }else{
+      done(fallbackCopy(code));
+    }
   }
 
   function showToastLike(btn, text){
     if(!btn) return;
-    const original = btn.textContent;
+    if(!btn.dataset.orig) btn.dataset.orig = btn.textContent;
     btn.textContent = text;
-    setTimeout(() => { btn.textContent = original; }, 1500);
+    clearTimeout(btn._t);
+    btn._t = setTimeout(() => { btn.textContent = btn.dataset.orig; }, 1500);
   }
+  /* ---------- akhir PERBAIKAN ---------- */
 
   /* ---------- Form: Pengaduan ---------- */
   const complaintForm = document.getElementById('complaintForm');
