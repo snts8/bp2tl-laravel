@@ -335,6 +335,7 @@
 </div>
 
 <script>window.BP2TL_API_BASE = @json(request()->getBasePath() . '/api'); window.BP2TL_URLS = { admin: @json(url('/admin')) };</script>
+<script src="{{ asset('js/leave-guard.js') }}"></script>
 <script src="{{ asset('js/api.js') }}"></script>
 <script src="{{ asset('js/main.js') }}"></script>
 <script src="{{ asset('js/chatbot.js') }}"></script>
